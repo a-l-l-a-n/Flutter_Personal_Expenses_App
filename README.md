@@ -1,16 +1,14 @@
-# flutter_personal_money_app
+# Flutter_personal_money_app
 
-A new Flutter project.
+This is a Flutter Application Project used to manage the daily expenses of a person.
+
+Features:
+  Dynamic Chart that shows the expenses of previous 7 days.
+  Adding Expenses on particular day
+  
+# Game-Images:
+![alt text](https://github.com/a-l-l-a-n/Flutter_Personal_Expenses_App/blob/main/Images/Main_Page.jpeg)
+![alt text](https://github.com/a-l-l-a-n/Flutter_Personal_Expenses_App/blob/main/Images/Adding_Transaction.jpeg)
 
 ## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  Run the main.dart file [Make sure to use android emulator]
