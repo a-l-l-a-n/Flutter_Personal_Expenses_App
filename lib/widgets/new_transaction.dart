@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
@@ -10,6 +12,7 @@ class NewTransaction extends StatefulWidget {
 }
 
 class _NewTransactionState extends State<NewTransaction> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
 
   final amountController = TextEditingController();
@@ -33,76 +36,114 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
       child: Container(
-        height: 300,
-        padding: EdgeInsets.only(
-            left: 10,
-            top: 10,
-            right: 10,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 5),
-        child: ListView(
-          children: [
-            Container(
-              padding: EdgeInsets.all(3),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "Enter the Title:",
+                ),
+                keyboardType: TextInputType.text,
+                controller: titleController,
+                validator: (v) {
+                  if (v.toString().trim().isEmpty) {
+                    return "Title cannot be empty";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "Enter the Amount: ",
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                //onSubmitted: (txt) => amountController.text = txt,
+                controller: amountController,
+                validator: (v) {
+                  if (v.toString().trim().isEmpty) {
+                    return "Amount cannot be empty";
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: "Enter the Title:",
-                    ),
-                    keyboardType: TextInputType.text,
-                    controller: titleController,
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: "Enter the Amount: ",
-                    ),
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    //onSubmitted: (txt) => amountController.text = txt,
-                    controller: amountController,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(_selectedDate == null
-                          ? 'Pick a date'
-                          : 'Picked Date:${DateFormat.yMd().format(_selectedDate)}'),
-                      TextButton(
-                        onPressed: datePicker,
-                        child: Text(
-                          'Choose Date',
-                          style: TextStyle(
-                              color: Theme.of(context).accentColor,
-                              fontWeight: FontWeight.bold),
-                        ),
+                  Text(_selectedDate == null
+                      ? 'Pick a date'
+                      : 'Picked Date:${DateFormat.yMd().format(_selectedDate)}'),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    child: TextButton.icon(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 13)),
+                        backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.2)),
                       ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    child: Text(
-                      'Add Transaction',
-                      style: TextStyle(
-                        fontFamily: 'Quicksand',
-                        color: Colors.white,
+                      onPressed: datePicker,
+                      icon: Icon(CupertinoIcons.calendar),
+                      label: Text(
+                        'Choose Date',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                    onPressed: () {
-                      String title = titleController.text;
-                      double amount =
-                          double.parse(amountController.text.toString());
-                      if (title.isNotEmpty &&
-                          amount > 0 &&
-                          _selectedDate != null)
-                        widget.addTransaction(title, amount, _selectedDate);
-                    },
                   ),
                 ],
               ),
-            ),
-          ],
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                  elevation: MaterialStateProperty.all(0),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50))),
+                  padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12.5)),
+                ),
+                icon: Icon(Icons.add_circle_outline),
+                label: Text(
+                  'Add Transaction',
+                  style: TextStyle(
+                    fontFamily: 'Quicksand',
+                    color: Colors.white,
+                  ),
+                ),
+                onPressed: () {
+                  if (!_formKey.currentState.validate()) return;
+
+                  String title = titleController.text;
+                  double amount =
+                      double.parse(amountController.text.toString());
+                  if (title.isNotEmpty && amount > 0 && _selectedDate != null)
+                    widget.addTransaction(title, amount, _selectedDate);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
